@@ -86,10 +86,16 @@ namespace QR
             Parret = design_data.Parret;
         }
 
+        private BitSource CreateBitSource(byte[] b){
+            sbyte[] s = new sbyte[b.Length];
+            Buffer.BlockCopy(b,0,s,0,b.Length);
+            return new BitSource(s);
+        }
+
         public Image CreateImage()
         {
             //まず32*32
-            BitSource bits = new BitSource(bmp);
+            BitSource bits = CreateBitSource(bmp);
             Bitmap bitmap = new Bitmap(32, 32);
 
             for (int i = 0; i < 32; i++)
