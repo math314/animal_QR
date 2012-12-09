@@ -13,6 +13,9 @@ namespace QR
 
         static void Main(string[] args)
         {
+            Read4();
+            return;
+
             string search_dir = Directory.GetCurrentDirectory();
 
             try
@@ -32,6 +35,17 @@ namespace QR
             {
                 Console.Write(ex.Message);
             }
+        }
+
+        static void Read4()
+        {
+            string dir = @"C:\tools\etc\Dropbox\かいせきどうぶつの森\サンプル\マイデザイン\4分割";
+            string path = "*.png";
+
+            var pathes = Directory.GetFiles(dir, path);
+            MyDesign design = new MyDesign(pathes);
+
+            design.CreateImage().Save("test.bmp");
         }
     }
 }

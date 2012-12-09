@@ -52,6 +52,29 @@ namespace QR
 
         public byte[] bmp { get; set; }
 
+        public MyDesign(string[] pathes){
+            if (pathes.Length != 4)
+                throw new ArgumentException(string.Format("{0}分割のファイルは読み込めません、4分割ファイルのみ読み込み可能です。",pathes.Length));
+
+            byte[] use;
+            using (MemoryStream ms = new MemoryStream(2500))
+            {
+                for (int i = 0; i < 4; i++)
+                {
+                    var result = QRReader.Read(pathes[i]);
+                    ResultParser red = new ResultParser(result);
+                    byte[] b = red.GetByte();
+                    ms.Write(b, 0, b.Length);
+                }
+
+                ms.Seek(0, SeekOrigin.Begin);
+                use = new byte[ms.Length];
+                ms.Read(use, 0, use.Length);
+            }
+
+            init(use);
+        }
+
         public MyDesign(string path)
         {
             var result = QRReader.Read(path);
@@ -94,13 +117,20 @@ namespace QR
 
         public Image CreateImage()
         {
-            //まず32*32
             BitSource bits = CreateBitSource(bmp);
-            Bitmap bitmap = new Bitmap(32, 32);
+            int h,w;
+            if(bmp.Length == 512){
+                h = w = 32;
+            } else {
+                h = 128;
+                w = 32;
+            }
+            //h * w
+            Bitmap bitmap = new Bitmap(w, h);
 
-            for (int i = 0; i < 32; i++)
+            for (int i = 0; i < h; i++)
             {
-                for (int j = 0; j < 32; j++)
+                for (int j = 0; j < w; j++)
                 {
                     int clr = bits.readBits(4);
                     bitmap.SetPixel(j, i, ColorTable.GetColor(Parret[clr]));
